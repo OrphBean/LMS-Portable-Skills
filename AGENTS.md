@@ -259,7 +259,10 @@ It is idempotent and safe to re-run. It never deletes existing data.
 # 9. Update Procedure
 
 LM Studio updates are the highest-risk operation because LM Studio does not
-officially guarantee this portable-junction configuration. Follow this sequence.
+officially guarantee this portable-junction configuration. Prefer the automated
+path: place the new installer in `App\` and run `update.bat` (which drives the
+full sequence below). The manual procedure is retained as the reference for what
+it does and for troubleshooting.
 
 ## Step 1 — Close LM Studio
 

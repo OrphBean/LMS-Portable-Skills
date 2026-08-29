@@ -95,33 +95,30 @@ move the whole folder or clone it somewhere else and it just works (re-run
 
 Updates are the highest-risk step because LM Studio does not officially support
 this junction setup, and an updater can silently recreate a normal folder where a
-junction used to be. **Always update through the portable launcher, never a
-freshly-created shortcut.**
+junction used to be. **Use the bat-driven update — it follows the safe protocol.**
 
-1. **Close LM Studio** (and any `LM Studio` / `lms` background processes).
-2. **Verify the junctions** first (optional but recommended):
-   ```powershell
-   Get-Item "$env:USERPROFILE\.lmstudio","$env:USERPROFILE\.cache\lm-studio","$env:APPDATA\LM Studio" -Force |
-     Format-Table FullName,LinkType,Target -AutoSize
-   ```
-   All three should report `Junction` pointing into `<folder>\Data`.
-3. **Back up your data** (recommended before any update):
-   ```powershell
-   $stamp = Get-Date -Format "yyyyMMdd-HHmmss"; $src = "<folder>\Data"; $dst = "<folder>\Backups\Data-$stamp"
-   robocopy $src $dst /MIR /COPY:DAT /DCOPY:DAT /R:2 /W:2
-   ```
-4. **Install the new LM Studio build** into `App\LM Studio` (download the new
-   version from <https://lmstudio.ai/download> and replace `LM Studio.exe` + resources,
-   or run its installer). Do not delete `Data`.
-5. **Refuse** any "launch LM Studio now" prompt the updater offers.
-6. **Launch via `Launch-LM-Studio.bat`** — the launcher re-verifies the junctions
-   on startup. If it reports a normal folder replaced a junction, stop; the old
-   folder is preserved for inspection; verify it holds nothing new before removing.
-7. **Confirm it works** — run a quick request and check that new activity appears
-   under `<folder>\Data\dot-lmstudio\conversations`.
+1. Download the new LM Studio installer from **<https://lmstudio.ai/download>** and
+   place it in the `App\` folder (e.g. `App\LM-Studio-x.y.z-x64.exe`).
+2. Double-click **`update.bat`**. It will:
+   - close LM Studio (and any `LM Studio` / `lms` background processes);
+   - verify the profile junctions (and stop if they are not all valid — run
+     `install.bat` first);
+   - **back up** your portable data to `Backups\Data-<timestamp>` (press `Y`; or
+     skip with `-SkipBackup`);
+   - run the installer you placed in `App\` (complete the installer windows that
+     open);
+   - copy the freshly installed app into `App\LM Studio`, then re-verify the
+     junctions.
+3. If no installer is present, `update.bat` opens the download page and tells you
+   to place the installer in `App\` then re-run.
 
-If anything looks off at any step, stop and consult `AGENTS.md` (§9 full update
-procedure, §11 data recovery) — preservation always comes before repair.
+Rarely, an LM Studio updater can still replace a junction with a normal folder
+while updating itself. If `Launch-LM-Studio.bat` ever reports that, stop and
+consult `AGENTS.md` (§9 full procedure, §11 data recovery) — preservation always
+comes before repair.
+
+> Advanced: run `Update-LM-Studio.ps1` directly if you prefer prompts/options
+> (`-SkipBackup` to skip the backup, `-NoLaunch` to not auto-launch).
 
 ---
 
