@@ -1,6 +1,11 @@
-# LM Studio binaries - recipient downloads these from LM Studio itself.
-# The portable launcher expects them at App\LM Studio\LM Studio.exe.
-/App/
+# --- LM Studio app binaries (user installs/copies these themselves) ---
+# Keep the App\LM Studio folder structure tracked, but ignore the binary
+# content and the downloaded installer. The launcher expects the app at
+# App\LM Studio\LM Studio.exe.
+/App/*
+!/App/LM Studio/
+/App/LM Studio/*
+!/App/LM Studio/README.txt
 
 # --- Large / regenerable / machine-specific data under the portable Data tree.
 # Only the bespoke skills plugin is tracked; everything else is created or

@@ -27,12 +27,7 @@ plumbing and the custom skills.
 
 ## First-time install (new machine)
 
-### 1. Get the LM Studio app
-Download the Windows installer from **<https://lmstudio.ai/download>** and install it
-anywhere (or keep the portable binary). It does **not** matter where LM Studio
-puts its default profile — this bundle redirects it.
-
-### 2. Get this folder
+### 1. Get this folder
 Clone the repo (or copy the folder) to a drive with plenty of free space and a
 stable path, e.g.:
 
@@ -43,36 +38,33 @@ D:\lmstudioPortable
 Do **not** put this inside `C:\Users\...` if you want to keep persistent data off
 `C:`.
 
-### 3. Place the LM Studio binaries here
-Copy the LM Studio program files so that this exact file exists:
+### 2. Install the LM Studio app
+- Download the Windows installer from **<https://lmstudio.ai/download>**.
+- Run the installer, and either:
+  - **(recommended)** choose the install location
+    `<your folder>\App\LM Studio`, **or**
+  - install LM Studio normally (wherever it defaults) — the setup step will copy
+    it into `App\LM Studio` for you.
+
+Either way, the goal is that this file ends up existing:
 
 ```
 <your folder>\App\LM Studio\LM Studio.exe
 ```
 
-(Keep the `App\LM Studio` structure exactly. The launcher looks for `LM Studio.exe` there.)
-
-If you installed LM Studio normally, copy these out of its install directory into
-`<your folder>\App\LM Studio\`. Alternatively, drop a portable build there.
-
-### 4. Run the one-time setup
-Open PowerShell in the folder and run:
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Portable.ps1
-```
-
-This is idempotent and safe to re-run. It will:
-- verify the tree and that `App\LM Studio\LM Studio.exe` exists;
+### 3. Run the setup
+Just double-click **`install.bat`**. It is idempotent and safe to re-run. It will:
+- create the folder structure (`App\LM Studio`, `Data\...`, `.agents\skills`, `Backups`, `Models`);
+- find the LM Studio app (in `App\LM Studio`, or copy it from your install location);
 - create the profile **junctions** for **your** user (see *How it works*);
 - seed the skills plugin config to point at `.agents\skills`;
 - install the skills plugin's npm dependencies (`@lmstudio/sdk`, `zod`) — first run needs network access.
 
-### 5. Launch
-Double-click **`Launch-LM-Studio.bat`** (or run the `.ps1`). The launcher re-checks
-and self-heals the junctions on every start.
+### 4. Launch
+Double-click **`Launch-LM-Studio.bat`**. The launcher re-checks and self-heals the
+junctions on every start.
 
-### 6. Move models off C:
+### 5. Move models off C:
 In LM Studio **Settings → My Models**, set the download folder to a directory on
 this drive, e.g. `D:\lmstudioPortable\Models`, so large models don't fill `C:`.
 
