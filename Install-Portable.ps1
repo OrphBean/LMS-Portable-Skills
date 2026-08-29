@@ -1,3 +1,7 @@
+param(
+    [switch]$Overwrite
+)
+
 $ErrorActionPreference = "Stop"
 
 # One-time setup for a NEW machine. Run this after cloning the repo (or copying
@@ -10,6 +14,10 @@ $ErrorActionPreference = "Stop"
 #   5. prints a status report.
 #
 # Re-run safely any time: it is idempotent and preserves existing data.
+#
+# -Overwrite: re-points any existing profile junction that currently targets a
+#             DIFFERENT install. Sets it to this portable root. The other
+#             install's data is left intact on disk (only the junction changes).
 $script:PortableRoot = [IO.Path]::GetFullPath($PSScriptRoot)
 
 Import-Module (Join-Path $PSScriptRoot "Portable.psm1") -Force
@@ -36,22 +44,28 @@ if (-not (Test-Path -LiteralPath $script:Executable)) {
 }
 
 # 2. Profile junctions for THIS user
-Ensure-AllMappings -PortableRoot $script:PortableRoot
+Ensure-AllMappings -PortableRoot $script:PortableRoot -Overwrite:$Overwrite
 Write-Host ""
 
 # 3. Skills plugin config
 Ensure-SkillsPluginConfig -PortableRoot $script:PortableRoot
 Write-Host ""
 
-# 4. Skills plugin npm dependencies
-$depsOk = Install-PluginDependencies -PortableRoot $script:PortableRoot
+# 4. Knowledge base setup (corpora folder + readme)
+Ensure-KnowledgeBaseSetup -PortableRoot $script:PortableRoot
 Write-Host ""
 
-# 5. Report
+# 5. Plugin npm dependencies
+$skillsOk = Install-PluginDependencies -PortableRoot $script:PortableRoot -PluginName "skills"
+$kbOk = Install-PluginDependencies -PortableRoot $script:PortableRoot -PluginName "knowledge-base"
+Write-Host ""
+
+# 6. Report
 Write-Host "=== Summary ===" -ForegroundColor Cyan
 Write-Host "  Portable root : $($script:PortableRoot)"
 Write-Host "  LM Studio exe : $(Test-Path -LiteralPath $script:Executable)"
-Write-Host "  Plugin deps   : $($depsOk -or (Test-Path -LiteralPath (Join-Path $script:DataRoot 'dot-lmstudio\extensions\plugins\khtsly\skills\node_modules\@lmstudio\sdk')))"
+Write-Host "  Skills deps   : $($skillsOk -or (Test-Path -LiteralPath (Join-Path $script:DataRoot 'dot-lmstudio\extensions\plugins\khtsly\skills\node_modules\@lmstudio\sdk')))"
+Write-Host "  KB deps       : $($kbOk -or (Test-Path -LiteralPath (Join-Path $script:DataRoot 'dot-lmstudio\extensions\plugins\khtsly\knowledge-base\node_modules\@lmstudio\sdk')))"
 Write-Host ""
 Write-Host "Next steps:"
 if (-not (Test-Path -LiteralPath $script:Executable)) {

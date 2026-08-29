@@ -13,6 +13,7 @@ $script:Executable = Join-Path $script:PortableRoot "App\LM Studio\LM Studio.exe
 
 Ensure-AllMappings -PortableRoot $script:PortableRoot
 Ensure-SkillsPluginConfig -PortableRoot $script:PortableRoot
+Ensure-KnowledgeBaseSetup -PortableRoot $script:PortableRoot
 
 if (-not (Test-Path -LiteralPath $script:Executable)) {
     throw "LM Studio executable was not found:`n$($script:Executable)`n`nPlace the LM Studio binaries in 'App\LM Studio' then re-run."

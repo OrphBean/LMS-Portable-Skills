@@ -1,12 +1,9 @@
-$ErrorActionPreference = "Stop"
-
-# Update the portable LM Studio app + re-verify its junctions. Run this from
-# update.bat (or directly). Follows the safety protocol in AGENTS.md: whatever
-# it does, it preserves existing data and never deletes anything.
 param(
     [switch]$SkipBackup,
     [switch]$NoLaunch
 )
+
+$ErrorActionPreference = "Stop"
 
 $script:PortableRoot = [IO.Path]::GetFullPath($PSScriptRoot)
 Import-Module (Join-Path $PSScriptRoot "Portable.psm1") -Force

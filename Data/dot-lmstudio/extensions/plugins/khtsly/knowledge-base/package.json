@@ -1,0 +1,21 @@
+{
+  "name": "lms-plugin-knowledge-base",
+  "version": "1.0.0",
+  "description": "Persistent folder-based knowledge base for LM Studio. Organize reference documents into named corpora under a knowledge_base folder, embed them with a local model, and retrieve relevant chunks per chat.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "esbuild .lmstudio/entry.ts --bundle --format=cjs --platform=node --target=es2022 --outfile=.lmstudio/production.js --external:@lmstudio/sdk --external:zod",
+    "dev": "esbuild .lmstudio/entry.ts --bundle --format=cjs --platform=node --target=es2022 --outfile=.lmstudio/production.js --external:@lmstudio/sdk --external:zod",
+    "push": "lms push"
+  },
+  "author": "khtsly",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@lmstudio/sdk": "^1.5.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.8",
+    "typescript": "^5.4.5"
+  }
+}

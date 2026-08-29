@@ -560,6 +560,109 @@ rebuilding. Restart LM Studio after rebuilding so the plugin process reloads.
 
 ---
 
+# 18. Knowledge Base Plugin (`khtsly/knowledge-base`)
+
+The installed LM Studio instance also carries a **persistent, folder-based RAG
+plugin** (`khtsly/knowledge-base`). It lets you keep reference documents in a
+`knowledge_base` tree (one subfolder per corpus) and retrieve relevant chunks
+either automatically per chat (assigned corpora) or on demand (tools).
+
+## Data layout
+
+```text
+<PortableRoot>\Data\dot-lmstudio\
+├── knowledge-base\                      <- corpora root (user data, untracked)
+│   ├── film-noir\
+│   │   ├── _corpus.md                   <- optional; first paragraph = description
+│   │   ├── noir.md
+│   │   └── ...
+│   ├── prompt-examples\
+│   └── ...
+└── plugin-data\
+    └── lms-knowledge-base\
+        ├── settings.json                <- KB root, embedding model, chunk sizes
+        └── index.json                   <- GENERATED vector index (derived)
+```
+
+- The **corpora root** (`knowledge-base\`) is user reference data. It is NOT
+  tracked in git. Never delete it; it may hold your film styles, prompt examples,
+  genre notes, etc.
+- Each **corpus** is an immediate subfolder. Nested folders under a corpus are
+  scanned too, but a corpus is identified by its top folder name.
+- `index.json` is a **derived artifact**. It is safe to rebuild (via `reindex_kb`),
+  and must never be hand-edited.
+
+## Supported document types
+
+`.md`, `.markdown`, `.txt`, `.text`, `.rst`, `.json`, `.jsonl`, `.yaml`, `.yml`,
+`.csv`, `.tsv`, `.html`, `.htm`, `.css`, `.js`, `.ts`, `.tsx`, `.jsx`, `.py`,
+`.sh`, `.ps1`, `.bat`, `.cmd`, `.sql`, `.xml`, `.log`. `_corpus.md` /
+`_corpus.json` at the corpus root are treated as metadata, not content.
+
+## Manual / assigned-corpora workflow (the primary flow)
+
+You DO NOT edit skills when you add reference data. Instead:
+
+1. Drop files into `<PortableRoot>\Data\dot-lmstudio\knowledge-base\<corpus>\`.
+2. In a chat, configure the plugin (per-chat config): set **Assigned Corpora** to
+   the corpus folder name(s) and leave **Auto-Retrieve** on.
+3. On each prompt, the plugin embeds the query and injects matching chunks from
+   the assigned corpora into the prompt. No tool call is required.
+4. If you add/change files, either run the `reindex_kb` tool or restart the
+   conversation; the index refreshes on first search when stale.
+
+## Tools
+
+- `list_kb_corpora` — names + descriptions + doc/chunk counts.
+- `list_kb_documents` — files inside a corpus.
+- `search_kb` — semantic search over the whole KB or chosen corpora.
+- `read_kb_document` — full document text by corpus + filename.
+- `add_kb_document` — write a new document into a corpus (creates the folder,
+  re-indexes immediately).
+- `reindex_kb` — rebuild the vector index from disk.
+
+## Config fields (per-chat unless noted)
+
+`knowledgeBasePath` (root, shared), `assignedCorpora` (per-chat string array),
+`autoRetrieve` (boolean), `retrievalLimit`, `retrievalAffinityThreshold`,
+`embeddingModel` (default `nomic-ai/nomic-embed-text-v1.5-GGUF`), `chunkChars`,
+`chunkOverlapChars`.
+
+## Embedded model & index freshness
+
+Indexing uses LM Studio's own **embedding model** via `client.embedding.model()`.
+The model must be available/loadable in LM Studio. `index.json` stores vectors per
+chunk; searching embeds the query and cosine-matches against the stored chunks
+(only from assigned corpora when auto-RAG is on). To fully re-index, delete
+`plugin-data\lms-knowledge-base\index.json` and call `reindex_kb`.
+
+## Editing / rebuilding the plugin
+
+Identical to the skills plugin. Bundle lives at:
+
+```text
+<PortableRoot>\Data\dot-lmstudio\extensions\plugins\khtsly\knowledge-base\.lmstudio\production.js
+```
+
+Source in `src/`. Rebuild from the plugin directory:
+
+```powershell
+$esbuild = "<PortableRoot>\App\LM Studio\resources\app\.webpack\bin\esbuild.exe"
+& $esbuild ".lmstudio\entry.ts" --bundle --format=cjs --platform=node `
+    --target=es2022 --outfile=".lmstudio\production.js" `
+    --external:@lmstudio/sdk --external:zod
+```
+
+Back up `production.js` first, restart LM Studio.
+
+## Debugging
+
+`LMS_KNOWLEDGE_DEBUG=1` in the plugin process yields `[knowledge-base]` log lines.
+Plugin stdout appears in the server log under
+`<PortableRoot>\Data\dot-lmstudio\server-logs\YYYY-MM\YYYY-MM-DD.1.log`.
+
+---
+
 # 17. Handoff Objective
 
 An agent receiving this file should be able to:
@@ -572,7 +675,9 @@ An agent receiving this file should be able to:
 - preserve and reconcile recovery directories;
 - keep persistent LM Studio data off the system drive as far as practical;
 - maintain the skills plugin (rebuild bundle after source edits, verify
-  preprocessor injection, keep the skills directory in the portable tree).
+  preprocessor injection, keep the skills directory in the portable tree);
+- maintain the knowledge-base plugin (rebuild bundle after source edits, keep
+  the corpora root in the portable tree, treat `index.json` as derived).
 
 Do not redesign this installation unless there is a specific technical reason to
 do so. If a future LM Studio release introduces an officially supported

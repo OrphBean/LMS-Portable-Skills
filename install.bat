@@ -1,5 +1,5 @@
 @echo off
-setlocal EnableExtensions
+setlocal EnableExtensions EnableDelayedExpansion
 cd /d "%~dp0"
 
 REM ============================================================
@@ -38,7 +38,34 @@ echo.
 
 if exist "%EXE%" (
     echo [3/4] Setting up portable profile + skills plugin...
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%Install-Portable.ps1"
+
+    REM --- Junction check: if a profile junction points to a DIFFERENT install,
+    REM --- offer the option to re-point it to this one. The other install's
+    REM --- data is NOT touched - only the junction is changed.
+    set "OVERWRITE_JUNCTIONS="
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Import-Module '%ROOT%Portable.psm1' -Force; if (Test-PortableMappingMismatch -PortableRoot '%ROOT%') { exit 1 } else { exit 0 }" >nul 2>nul
+    if errorlevel 1 (
+        echo.
+        echo   WARNING: One or more LM Studio profile junctions currently point
+        echo   to a DIFFERENT installation folder.
+        echo   They are:  %USERPROFILE%\.lmstudio
+        echo              %USERPROFILE%\.cache\lm-studio
+        echo              %APPDATA%\LM Studio
+        echo.
+        echo   Leaving them as-is keeps this install pointing at the other one.
+        echo.
+        choice /c YN /m "  Re-point them to THIS install [Y=yes, N=no]"
+        if errorlevel 2 (
+            echo   Keeping the current junctions. Setup will continue but the
+            echo   profile junctions still point to the other install.
+        ) else (
+            echo   Re-pointing profile junctions to this install...
+            set "OVERWRITE_JUNCTIONS=-Overwrite"
+        )
+        echo.
+    )
+
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%Install-Portable.ps1" !OVERWRITE_JUNCTIONS!
     if errorlevel 1 (
         echo   WARNING: setup reported an issue - read the messages above.
     )

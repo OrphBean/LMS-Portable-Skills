@@ -33,7 +33,8 @@ function Get-PortableMappings {
 function Ensure-PortableMapping {
     param(
         [string]$Link,
-        [string]$Target
+        [string]$Target,
+        [switch]$Overwrite
     )
 
     New-Item -ItemType Directory -Force -Path $Target | Out-Null
@@ -48,6 +49,22 @@ function Ensure-PortableMapping {
                 ([IO.Path]::GetFullPath($actualTarget).TrimEnd('\') -ieq
                  [IO.Path]::GetFullPath($Target).TrimEnd('\'))) {
                 Write-Host "  Valid: $Link -> $Target" -ForegroundColor Green
+                return
+            }
+
+            if ($Overwrite) {
+                # A junction pointing to a different install. Repoint it. rmdir
+                # on a junction removes ONLY the link (never the target data),
+                # so the other install's data stays intact on disk.
+                Write-Warning "  Re-pointing junction:"
+                Write-Warning "    was: $actualTarget"
+                Write-Warning "    now: $Target"
+                cmd.exe /c "rmdir /q `"$Link`"" | Out-Null
+                cmd.exe /c "mklink /J `"$Link`" `"$Target`"" | Out-Null
+                if (-not (Test-IsReparsePoint $Link)) {
+                    throw "Could not re-point junction: $Link"
+                }
+                Write-Host "  Re-pointed: $Link -> $Target" -ForegroundColor Yellow
                 return
             }
 
@@ -75,15 +92,48 @@ function Ensure-PortableMapping {
 }
 
 function Ensure-AllMappings {
-    param([string]$PortableRoot)
+    param(
+        [string]$PortableRoot,
+        [switch]$Overwrite
+    )
 
     $dataRoot = Join-Path $PortableRoot "Data"
     $mappings = Get-PortableMappings -PortableRoot $PortableRoot -DataRoot $dataRoot
 
     Write-Host "Ensuring portable profile junctions.." -ForegroundColor Cyan
     foreach ($mapping in $mappings.GetEnumerator()) {
-        Ensure-PortableMapping -Link $mapping.Key -Target $mapping.Value
+        Ensure-PortableMapping -Link $mapping.Key -Target $mapping.Value -Overwrite:$Overwrite
     }
+}
+
+# Returns $true when at least one existing profile junction points somewhere
+# other than this portable root. Normal folders that replaced a junction are NOT
+# treated as a mismatch (the preserve-and-recreate logic handles those safely).
+function Test-PortableMappingMismatch {
+    param([string]$PortableRoot)
+
+    $dataRoot = Join-Path $PortableRoot "Data"
+    $mappings = Get-PortableMappings -PortableRoot $PortableRoot -DataRoot $dataRoot
+
+    foreach ($mapping in $mappings.GetEnumerator()) {
+        $link = $mapping.Key
+        $target = $mapping.Value
+
+        if (Test-Path -LiteralPath $link) {
+            if (Test-IsReparsePoint $link) {
+                $item = Get-Item -LiteralPath $link -Force
+                $actualTarget = @($item.Target)[0]
+                $matches = $actualTarget -and
+                    ([IO.Path]::GetFullPath($actualTarget).TrimEnd('\') -ieq
+                     [IO.Path]::GetFullPath($target).TrimEnd('\'))
+                if (-not $matches) {
+                    return $true
+                }
+            }
+        }
+    }
+
+    return $false
 }
 
 # The skills root lives in the portable tree. Keep the plugin's saved path
@@ -127,23 +177,26 @@ function Ensure-SkillsPluginConfig {
 }
 
 function Install-PluginDependencies {
-    param([string]$PortableRoot)
+    param(
+        [string]$PortableRoot,
+        [string]$PluginName = "skills"
+    )
 
     $pluginDir = Join-Path $PortableRoot `
-        "Data\dot-lmstudio\extensions\plugins\khtsly\skills"
+        "Data\dot-lmstudio\extensions\plugins\khtsly\$PluginName"
 
     if (-not (Test-Path -LiteralPath $pluginDir)) {
-        Write-Warning "Skills plugin folder not found: $pluginDir"
+        Write-Warning "Plugin folder not found: $pluginDir ($PluginName)"
         return $false
     }
 
     $nodeModules = Join-Path $pluginDir "node_modules"
     if (Test-Path -LiteralPath (Join-Path $nodeModules "@lmstudio\sdk")) {
-        Write-Host "  Plugin dependencies already present." -ForegroundColor Green
+        Write-Host "  Plugin dependencies already present ($PluginName)." -ForegroundColor Green
         return $true
     }
 
-    Write-Host "  Installing plugin dependencies (npm install).." -ForegroundColor Yellow
+    Write-Host "  Installing plugin dependencies (npm install) for $PluginName.." -ForegroundColor Yellow
     Write-Host "    cwd: $pluginDir"
     Write-Host "    This may take a moment and needs network access."
     Write-Host "    Run manually if skipped:  (from '$pluginDir')  npm install"
@@ -165,9 +218,50 @@ function Install-PluginDependencies {
     }
 }
 
+# Seed the knowledge base folder if it is missing. The KB root is the user-facing
+# collection of corpora (one subfolder per corpus). Each corpus may carry a
+# _corpus.md descriptor used as its description. This never deletes or overwrites
+# existing reference documents.
+function Ensure-KnowledgeBaseSetup {
+    param([string]$PortableRoot)
+
+    $dataRoot = Join-Path $PortableRoot "Data"
+    $kbRoot = Join-Path $dataRoot "dot-lmstudio\knowledge-base"
+    $kbReadme = Join-Path $kbRoot "README.md"
+
+    Write-Host "Ensuring knowledge base configuration.." -ForegroundColor Cyan
+
+    if (-not (Test-Path -LiteralPath $kbRoot)) {
+        New-Item -ItemType Directory -Force -Path $kbRoot | Out-Null
+        Write-Host "  Created knowledge base root: $kbRoot" -ForegroundColor Yellow
+    }
+
+    if (-not (Test-Path -LiteralPath $kbReadme)) {
+        $readme = @"
+# Knowledge Base
+
+Place one folder per corpus inside this directory. Each subfolder is a
+knowledge base *corpus* (e.g. film-noir, prompt-examples).
+
+- Add reference documents (.md, .txt, .csv, source files, ...) inside a corpus
+  folder; every supported file becomes searchable.
+- Optionally add a ``_corpus.md`` file at the top of a corpus folder with a
+  one-line description (the first paragraph is used).
+- After adding or editing documents, run the ``reindex_kb`` tool (or let the
+  plugin auto-index on first use) to refresh the vector index.
+- In a chat, assign the corpora you want to use, and the plugin auto-retrieves
+  relevant chunks from those corpora on every prompt.
+"@
+        Set-Content -LiteralPath $kbReadme -Value $readme -Encoding UTF8
+        Write-Host "  Seeded knowledge base readme: $kbReadme" -ForegroundColor Yellow
+    }
+}
+
 Export-ModuleMember -Function `
     Test-IsReparsePoint, `
     Get-PortableMappings, `
     Ensure-AllMappings, `
+    Test-PortableMappingMismatch, `
     Ensure-SkillsPluginConfig, `
+    Ensure-KnowledgeBaseSetup, `
     Install-PluginDependencies
