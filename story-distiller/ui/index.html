@@ -91,6 +91,7 @@
     <p class="muted" style="margin-top:6px">One corpus per story is written under the KB root. Progress streams below.</p>
 
     <div class="conn" id="conn"><span class="dot idle"></span> idle</div>
+    <div class="muted" id="kbinfo">KB root: —</div>
     <h2 style="margin-top:16px">Progress</h2>
     <div class="log" id="log"></div>
     <div class="summary" id="summary"></div>
@@ -197,7 +198,7 @@ $('run').addEventListener('click', async ()=>{
         if (!line) continue;
         const ev = JSON.parse(line.slice(6));
         lastSeen = Date.now(); setConn('working — '+elapsed(), 'work');
-        if (ev.type==='start') log('Batch started.', 'info');
+        if (ev.type==='start') { log('Batch started.', 'info'); if (ev.kbRoot) $('kbinfo').textContent = 'KB root: ' + ev.kbRoot; }
         else if (ev.type==='connected'){ log('Connected to LM Studio; running…', 'info'); setConn('working — '+elapsed()+' · connected', 'work'); }
         else if (ev.type==='story'){ log('['+ev.status+'] '+ev.story+(ev.message? ' — '+ev.message:''), ev.status==='done'?'ok':(ev.status==='failed'?'err':'info')); }
         else if (ev.type==='progress'){ log(ev.story+' — '+ev.message, 'info'); }
@@ -211,6 +212,9 @@ $('run').addEventListener('click', async ()=>{
   stopWatchdog(); running = false;
   $('run').disabled = false;
 });
+
+// Show where the server actually writes, so a mismatch is obvious.
+(async () => { try { const r = await fetch('/config',{cache:'no-store'}); const c = await r.json(); if (c.kbRoot) $('kbinfo').textContent = 'KB root: ' + c.kbRoot; } catch(e){} })();
 
 function renderSummary(s){
   const el = $('summary');

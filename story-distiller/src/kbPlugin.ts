@@ -54,6 +54,12 @@ export function readKbSettings(): KbSettings {
   return {};
 }
 
+// The knowledge base root the plugin actually reads, if it has configured one.
+export function knowledgeBaseDirFromSettings(): string | null {
+  const d = readKbSettings().knowledgeBaseDir;
+  return typeof d === "string" && d ? d : null;
+}
+
 export function writeKbSettings(settings: KbSettings): void {
   const file = kbPluginSettingsPath();
   fs.mkdirSync(path.dirname(file), { recursive: true });

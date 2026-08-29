@@ -7,7 +7,7 @@ import { loadFocusConfig } from "./config";
 import { extractText } from "./extract";
 import { collectStories, runBatch } from "./batch";
 import { analyzeStory } from "./distill";
-import { assignCorporaToKb } from "./kbPlugin";
+import { assignCorporaToKb, knowledgeBaseDirFromSettings } from "./kbPlugin";
 import { resolveBaseUrl } from "./lms";
 import { startServer } from "./ui/server";
 import type { DistillConfig, FocusConfig, StoryInput } from "./types";
@@ -201,7 +201,12 @@ function slug(name: string): string {
 }
 
 function defaultKbRoot(): string {
-  return path.resolve(__dirname, "..", "..", "Data", "dot-lmstudio", "knowledge-base");
+  // Prefer the KB root the plugin is actually configured to read; fall back to
+  // the portable tree derived from this install's own location.
+  return (
+    knowledgeBaseDirFromSettings() ||
+    path.resolve(__dirname, "..", "..", "Data", "dot-lmstudio", "knowledge-base")
+  );
 }
 
 function dryRunPlan(inputs: StoryInput[], focus: FocusConfig | null): void {

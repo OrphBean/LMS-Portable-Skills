@@ -90,6 +90,10 @@ export async function startServer(cfg: ServerConfig, port: number): Promise<void
       sendJson(res, 200, { ok: true });
       return;
     }
+    if (req.method === "GET" && route === "/config") {
+      sendJson(res, 200, { kbRoot: cfg.kbRoot, port });
+      return;
+    }
 
     if (req.method === "POST" && route === "/distill") {
       let body: any;
@@ -106,7 +110,7 @@ export async function startServer(cfg: ServerConfig, port: number): Promise<void
         Connection: "keep-alive",
         "Access-Control-Allow-Origin": "*",
       });
-      sseWrite(res, { type: "start" });
+      sseWrite(res, { type: "start", kbRoot: cfg.kbRoot });
 
       try {
         const focusRaw = body.focus ?? cfg.defaultFocus ?? { aspects: [] };
