@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Story Distiller</title>
+<style>
+  :root { color-scheme: dark; }
+  body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; margin: 0; background: #0d1117; color: #e6edf3; }
+  header { padding: 18px 24px; border-bottom: 1px solid #21262d; background: #161b22; }
+  header h1 { margin: 0; font-size: 20px; }
+  header p { margin: 4px 0 0; color: #8b949e; font-size: 13px; }
+  main { display: grid; grid-template-columns: 320px 1fr; gap: 20px; padding: 20px 24px; max-width: 1400px; margin: 0 auto; }
+  section.panel { background: #161b22; border: 1px solid #21262d; border-radius: 8px; padding: 16px; }
+  h2 { margin: 0 0 12px; font-size: 14px; text-transform: uppercase; letter-spacing: .04em; color: #8b949e; }
+  label { display: block; font-size: 12px; color: #8b949e; margin: 10px 0 3px; }
+  input[type=text], input[type=number], textarea { width: 100%; box-sizing: border-box; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6edf3; padding: 7px 9px; font-size: 13px; }
+  textarea { resize: vertical; font-family: inherit; }
+  .row { display: flex; gap: 20px; }
+  .row > div { flex: 1; }
+  .btn { background: #238636; color: #fff; border: none; padding: 10px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; }
+  .btn:hover { background: #2ea043; }
+  .btn.secondary { background: #21262d; color: #e6edf3; }
+  .btn.danger { background: #b62324; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .aspect { border: 1px solid #30363d; border-radius: 6px; padding: 10px; margin-bottom: 10px; background: #0d1117; }
+  .aspect .head { display: flex; align-items: center; justify-content: space-between; }
+  .aspect input[type=text] { margin-bottom: 6px; }
+  #files { margin-top: 8px; }
+  #drop { border: 2px dashed #30363d; border-radius: 8px; padding: 22px; text-align: center; color: #8b949e; font-size: 13px; cursor: pointer; }
+  #drop.over { border-color: #2ea043; }
+  .file-list { margin-top: 10px; }
+  .file-list div { font-size: 12px; color: #8b949e; padding: 2px 0; }
+  .log { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 12px; line-height: 1.5; background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 12px; height: 300px; overflow-y: auto; white-space: pre-wrap; }
+  .log .ok { color: #3fb950; }
+  .log .err { color: #f85149; }
+  .log .info { color: #8b949e; }
+  .summary { margin-top: 12px; }
+  .summary .srow { padding: 4px 0; }
+  .badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; }
+  .badge.ok { background: #1f6f43; }
+  .badge.fail { background: #6f1f1f; }
+  .muted { color: #8b949e; font-size: 12px; }
+  .conn { font-size: 13px; font-weight: 600; margin: 10px 0 2px; }
+  .dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; vertical-align:middle; }
+  .dot.idle { background:#8b949e; }
+  .dot.ok { background:#3fb950; }
+  .dot.warn { background:#f85149; animation:pulse 1s infinite; }
+  .dot.work { background:#d29922; animation:pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity:.35; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Story Distiller</h1>
+  <p>Turn long stories into cinematic scene cards for MiniMax / image prompt dev. Runs against the loaded LM Studio model.</p>
+</header>
+<main>
+  <section class="panel">
+    <h2>Model &amp; Limits</h2>
+    <div class="row">
+      <div><label>Model identifier</label><input type="text" id="model" placeholder="(default: loaded model)" /></div>
+      <div><label>LM Studio server</label><input type="text" id="baseUrl" placeholder="auto-detect (default 1234)" /></div>
+    </div>
+    <div class="row">
+      <div><label>Slice chars</label><input type="number" id="sliceChars" value="16000" /></div>
+      <div><label>Slate chars</label><input type="number" id="slateChars" value="8000" /></div>
+      <div><label>Max tokens/call</label><input type="number" id="maxTokens" value="16000" /></div>
+      <div><label>Temperature</label><input type="number" step="0.05" id="temperature" value="0.3" /></div>
+    </div>
+    <label style="display:flex;align-items:center;gap:6px;margin-top:12px"><input type="checkbox" id="acts" /> Build act/sequence summaries</label>
+    <label style="display:flex;align-items:center;gap:6px;margin-top:6px"><input type="checkbox" id="assign" checked /> Auto-assign corpora to the KB plugin</label>
+
+    <label>Focus instruction (optional)</label>
+    <textarea id="instructions" rows="2" placeholder="e.g. Treat this as period cinema; prioritize mood and geographical atmosphere."></textarea>
+
+    <h2 style="margin-top:16px">Focus Aspects</h2>
+    <p class="muted" style="margin-top:0">Stable fields stay fixed; these add per-scene observations (mise&nbsp;en&nbsp;scène, costumes, behaviour, …).</p>
+    <div id="aspects"></div>
+    <button class="btn secondary" id="addAspect">+ Add aspect</button>
+  </section>
+
+  <section class="panel">
+    <h2>Stories</h2>
+    <input type="file" id="file" multiple accept=".txt,.md,.markdown,.docx,.pdf,.rst,.text" hidden />
+    <div id="drop">Drop .txt / Word (.docx) / PDF files here, or click to browse</div>
+    <div class="file-list" id="fileList"></div>
+
+    <h2 style="margin-top:16px">Run</h2>
+    <button class="btn" id="run" disabled>Distill &rarr;</button>
+    <p class="muted" style="margin-top:6px">One corpus per story is written under the KB root. Progress streams below.</p>
+
+    <div class="conn" id="conn"><span class="dot idle"></span> idle</div>
+    <h2 style="margin-top:16px">Progress</h2>
+    <div class="log" id="log"></div>
+    <div class="summary" id="summary"></div>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const files = [];
+const aspects = [];
+let running = false, startedAt = 0, lastSeen = 0, watchdog = null;
+const fmtTime = () => new Date().toLocaleTimeString();
+function elapsed(){ if(!startedAt) return ''; const s=Math.floor((Date.now()-startedAt)/1000); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+function setConn(text, cls){ const c=$('conn'); c.innerHTML='<span class="dot '+(cls||'idle')+'"></span> '+text; c.title=lastSeen?('last update '+new Date(lastSeen).toLocaleTimeString()):''; }
+function startWatchdog(){ stopWatchdog(); watchdog = setInterval(async ()=>{ if(!running) return; try{ const r=await fetch('/health',{cache:'no-store'}); if(r.ok){ lastSeen=Date.now(); setConn('working — '+elapsed()+' · alive', 'work'); } else { setConn('CONNECTION LOST — server did not respond to health check', 'warn'); } }catch(e){ setConn('CONNECTION LOST — server unreachable; the run may have stopped', 'warn'); } }, 5000); }
+function stopWatchdog(){ if(watchdog){ clearInterval(watchdog); watchdog=null; } }
+
+function slug(s){ return s.trim().toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,''); }
+function log(msg, cls){ const d=document.createElement('div'); if(cls) d.className=cls; d.textContent='['+fmtTime()+'] '+msg; $('log').appendChild(d); $('log').scrollTop=$('log').scrollHeight; }
+
+function addAspect(label='', prompt=''){
+  const i = aspects.length;
+  aspects.push({key:'', label, prompt});
+  const el = document.createElement('div');
+  el.className='aspect';
+  el.innerHTML =
+    `<div class="head"><input type="text" data-f="label" placeholder="Label (e.g. Mise en scène)" value="${label}"/><button class="btn danger" title="remove">&times;</button></div>` +
+    `<input type="text" data-f="key" placeholder="key (auto)" value="" />` +
+    `<textarea data-f="prompt" rows="2" placeholder="What to focus on">${prompt}</textarea>`;
+  el.querySelector('.head input').addEventListener('input', ()=>{ aspects[i].label = el.querySelector('[data-f=label]').value; el.querySelector('[data-f=key]').value = slug(aspects[i].label); });
+  el.querySelector('[data-f=key]').addEventListener('input', ()=>{ aspects[i].key = el.querySelector('[data-f=key]').value; });
+  el.querySelector('[data-f=prompt]').addEventListener('input', ()=>{ aspects[i].prompt = el.querySelector('[data-f=prompt]').value; });
+  el.querySelector('.btn').addEventListener('click', ()=>{ aspects.splice(i,1); el.remove(); updateRun(); });
+  $('aspects').appendChild(el);
+  updateRun();
+}
+
+function fileExt(name){ const m=name.match(/\.([a-z0-9]+)$/i); return m ? ('.'+m[1].toLowerCase()) : ''; }
+
+function addFiles(list){
+  for (const f of Array.from(list)){
+    if (files.some(x=>x.name===f.name)) continue;
+    files.push({ file:f, name:f.name, ext:fileExt(f.name), text:null, data:null });
+  }
+  renderFiles(); updateRun();
+}
+function renderFiles(){
+  $('fileList').innerHTML='';
+  for (const f of files){ const d=document.createElement('div'); d.textContent=f.name+' ('+f.ext+')'; $('fileList').appendChild(d); }
+}
+async function encodeBinary(file){
+  const buf = await file.arrayBuffer();
+  const bytes = new Uint8Array(buf); let bin=''; const chunk=0x8000;
+  for (let i=0;i<bytes.length;i+=chunk){ bin += String.fromCharCode.apply(null, bytes.subarray(i, i+chunk)); }
+  return btoa(bin);
+}
+async function loadFile(f){
+  if (f.ext==='.docx' || f.ext==='.pdf'){ f.data = await encodeBinary(f.file); }
+  else { f.text = await f.file.text(); }
+}
+function updateRun(){ $('run').disabled = files.length===0; }
+
+$('drop').addEventListener('click', ()=> $('file').click());
+$('file').addEventListener('change', (e)=> addFiles(e.target.files));
+['dragover','dragenter'].forEach(ev=> $('drop').addEventListener(ev, e=>{ e.preventDefault(); $('drop').classList.add('over'); }));
+['dragleave','drop'].forEach(ev=> $('drop').addEventListener(ev, e=>{ e.preventDefault(); $('drop').classList.remove('over'); }));
+$('drop').addEventListener('drop', e=> addFiles(e.dataTransfer.files));
+$('addAspect').addEventListener('click', ()=> addAspect());
+
+// Pre-fill helpful aspects
+addAspect('Mise en scène', 'Staging, blocking, composition; spatial arrangement of figures and objects, depth, foreground/background relations, environment and props.');
+addAspect('Costume design', 'Garments, fabrics, textures, colours, accessories; how dress signals status, era, mood or character.');
+addAspect('Character behaviour', 'Recurring gestures, micro-behaviours, habits, tics and body language, and what they reveal about the character.');
+
+$('run').addEventListener('click', async ()=>{
+  $('run').disabled = true; $('log').innerHTML=''; $('summary').innerHTML='';
+  running = true; startedAt = Date.now(); lastSeen = Date.now();
+  setConn('connecting…', 'work'); startWatchdog();
+  log('Reading files…', 'info');
+  let result = null; let endedOk = false;
+  try {
+    for (const f of files) await loadFile(f);
+    log('Connecting to LM Studio…', 'info');
+    const payload = {
+      model: $('model').value || null,
+      baseUrl: $('baseUrl').value || null,
+      sliceChars: +$('sliceChars').value, slateChars: +$('slateChars').value,
+      maxTokens: +$('maxTokens').value, temperature: +$('temperature').value,
+      acts: $('acts').checked,
+      assign: $('assign').checked,
+      focus: { instructions: $('instructions').value || undefined, aspects: aspects.filter(a=>a.label.trim()&&a.prompt.trim()).map(a=>({ key: a.key || slug(a.label), label: a.label.trim(), prompt: a.prompt.trim() })) },
+      files: files.map(f=>({ name:f.name, ext:f.ext, text:f.text, data:f.data })),
+    };
+    const resp = await fetch('/distill', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    if (!resp.body) throw new Error('no stream');
+    const reader = resp.body.getReader(); const dec = new TextDecoder(); let buf='';
+    while (true){
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream:true });
+      const chunks = buf.split('\n\n'); buf = chunks.pop();
+      for (const c of chunks){
+        const line = c.split('\n').find(l=>l.startsWith('data: '));
+        if (!line) continue;
+        const ev = JSON.parse(line.slice(6));
+        lastSeen = Date.now(); setConn('working — '+elapsed(), 'work');
+        if (ev.type==='start') log('Batch started.', 'info');
+        else if (ev.type==='connected'){ log('Connected to LM Studio; running…', 'info'); setConn('working — '+elapsed()+' · connected', 'work'); }
+        else if (ev.type==='story'){ log('['+ev.status+'] '+ev.story+(ev.message? ' — '+ev.message:''), ev.status==='done'?'ok':(ev.status==='failed'?'err':'info')); }
+        else if (ev.type==='progress'){ log(ev.story+' — '+ev.message, 'info'); }
+        else if (ev.type==='done'){ result = ev.summary; endedOk = true; setConn('done — '+elapsed(), 'ok'); }
+        else if (ev.type==='error'){ throw new Error(ev.error); }
+      }
+    }
+    if (!endedOk) { setConn('CONNECTION LOST — stream ended without a result', 'warn'); log('WARNING: stream ended before a summary; the server may have stopped.', 'err'); }
+    if (result){ renderSummary(result); log('Finished.', 'info'); }
+  } catch (e){ setConn('CONNECTION LOST — '+elapsed(), 'warn'); log('ERROR: '+e.message, 'err'); }
+  stopWatchdog(); running = false;
+  $('run').disabled = false;
+});
+
+function renderSummary(s){
+  const el = $('summary');
+  el.innerHTML = '<h2>Summary</h2>';
+  const h = document.createElement('div');
+  h.innerHTML = `${s.succeeded}/${s.total} stories written.`;
+  el.appendChild(h);
+  for (const r of s.results){
+    const row = document.createElement('div'); row.className='srow';
+    const ok = r.ok;
+    row.innerHTML = '<span class="badge '+(ok?'ok':'fail')+'">'+(ok?'ok':'failed')+'</span> ' +
+      escapeHtml(r.corpusName) + ' (' + r.scenes + ' scenes)' + (r.error? ' — '+escapeHtml(r.error):'');
+    el.appendChild(row);
+  }
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+</script>
+</body>
+</html>

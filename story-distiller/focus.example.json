@@ -1,0 +1,20 @@
+{
+  "instructions": "Treat this as cinema: foreground mood and atmosphere, locate every scene in a specific place and time of day.",
+  "aspects": [
+    {
+      "key": "miseEnScene",
+      "label": "Mise en scène",
+      "prompt": "Staging, blocking, composition; the spatial arrangement of figures and objects, depth and foreground/background relations, environment and props."
+    },
+    {
+      "key": "costumes",
+      "label": "Costume design",
+      "prompt": "Garments, fabrics, textures, colours and accessories; how dress signals status, era, mood or character."
+    },
+    {
+      "key": "behaviour",
+      "label": "Character behaviour",
+      "prompt": "Recurring gestures, micro-behaviours, habits, tics and body language, and what they reveal about the character."
+    }
+  ]
+}

@@ -196,7 +196,8 @@ function loadSettings() {
       embeddingModel: typeof parsed.embeddingModel === "string" && parsed.embeddingModel ? parsed.embeddingModel : DEFAULTS.embeddingModel,
       chunkChars: typeof parsed.chunkChars === "number" && parsed.chunkChars >= 200 ? parsed.chunkChars : DEFAULTS.chunkChars,
       chunkOverlapChars: typeof parsed.chunkOverlapChars === "number" && parsed.chunkOverlapChars >= 0 ? parsed.chunkOverlapChars : DEFAULTS.chunkOverlapChars,
-      maxFilesPerCorpus: typeof parsed.maxFilesPerCorpus === "number" && parsed.maxFilesPerCorpus >= 1 ? parsed.maxFilesPerCorpus : DEFAULTS.maxFilesPerCorpus
+      maxFilesPerCorpus: typeof parsed.maxFilesPerCorpus === "number" && parsed.maxFilesPerCorpus >= 1 ? parsed.maxFilesPerCorpus : DEFAULTS.maxFilesPerCorpus,
+      defaultCorpora: Array.isArray(parsed.defaultCorpora) ? parsed.defaultCorpora.filter((c) => typeof c === "string" && c) : DEFAULTS.defaultCorpora
     };
   } catch {
     return { ...DEFAULTS };
@@ -251,6 +252,9 @@ function resolveEffectiveConfig(ctl) {
   cacheTime = now;
   return result;
 }
+function getDefaultCorpora() {
+  return loadSettings().defaultCorpora;
+}
 var fs, DEFAULTS, cachedConfig, cacheTime;
 var init_settings = __esm({
   "src/settings.ts"() {
@@ -263,7 +267,8 @@ var init_settings = __esm({
       embeddingModel: DEFAULT_EMBEDDING_MODEL,
       chunkChars: DEFAULT_CHUNK_CHARS,
       chunkOverlapChars: DEFAULT_CHUNK_OVERLAP_CHARS,
-      maxFilesPerCorpus: 500
+      maxFilesPerCorpus: 500,
+      defaultCorpora: []
     };
     cachedConfig = null;
     cacheTime = 0;
@@ -876,8 +881,9 @@ async function promptPreprocessor(ctl, userMessage) {
     }
     const cfg = resolveEffectiveConfig(ctl);
     const c = ctl.getPluginConfig(configSchematics);
-    const assigned = c.get("assignedCorpora") ?? [];
+    const chatAssigned = c.get("assignedCorpora") ?? [];
     const autoRetrieve = c.get("autoRetrieve") ?? true;
+    const assigned = chatAssigned.length > 0 ? chatAssigned : getDefaultCorpora();
     if (!autoRetrieve || assigned.length === 0) {
       debugLog("auto-retrieve skipped (disabled or no assigned corpora)");
       return userMessage;

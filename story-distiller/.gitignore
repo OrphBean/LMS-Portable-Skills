@@ -1,0 +1,6 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.failures/
+*.log
+distiller.*.pid

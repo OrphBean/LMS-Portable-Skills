@@ -50,6 +50,7 @@ export interface PersistedSettings {
   chunkChars: number;
   chunkOverlapChars: number;
   maxFilesPerCorpus: number;
+  defaultCorpora: string[];
 }
 
 export interface EffectiveConfig {

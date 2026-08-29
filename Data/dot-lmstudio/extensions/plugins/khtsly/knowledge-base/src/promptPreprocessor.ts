@@ -1,6 +1,6 @@
 import type { ChatMessage, PromptPreprocessorController } from "@lmstudio/sdk";
 import { configSchematics } from "./config";
-import { resolveEffectiveConfig } from "./settings";
+import { resolveEffectiveConfig, getDefaultCorpora } from "./settings";
 import {
   MIN_PROMPT_LENGTH,
   REINJECT_INTERVAL_MS,
@@ -67,8 +67,11 @@ export async function promptPreprocessor(
 
     const cfg = resolveEffectiveConfig(ctl);
     const c = ctl.getPluginConfig(configSchematics);
-    const assigned = (c.get("assignedCorpora") as string[] | undefined) ?? [];
+    const chatAssigned = (c.get("assignedCorpora") as string[] | undefined) ?? [];
     const autoRetrieve = (c.get("autoRetrieve") as boolean | undefined) ?? true;
+    // Fall back to the durable default assignment when this chat has not chosen
+    // its own corpora (the distiller writes these into settings.json).
+    const assigned = chatAssigned.length > 0 ? chatAssigned : getDefaultCorpora();
 
     if (!autoRetrieve || assigned.length === 0) {
       debugLog("auto-retrieve skipped (disabled or no assigned corpora)");

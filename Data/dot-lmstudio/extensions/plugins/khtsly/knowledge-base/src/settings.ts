@@ -19,6 +19,7 @@ const DEFAULTS: PersistedSettings = {
   chunkChars: DEFAULT_CHUNK_CHARS,
   chunkOverlapChars: DEFAULT_CHUNK_OVERLAP_CHARS,
   maxFilesPerCorpus: 500,
+  defaultCorpora: [],
 };
 
 let cachedConfig: EffectiveConfig | null = null;
@@ -53,6 +54,10 @@ function loadSettings(): PersistedSettings {
         parsed.maxFilesPerCorpus >= 1
           ? parsed.maxFilesPerCorpus
           : DEFAULTS.maxFilesPerCorpus,
+      defaultCorpora:
+        Array.isArray(parsed.defaultCorpora)
+          ? parsed.defaultCorpora.filter((c) => typeof c === "string" && c)
+          : DEFAULTS.defaultCorpora,
     };
   } catch {
     return { ...DEFAULTS };
@@ -127,4 +132,11 @@ export function resolveEffectiveConfig(ctl: PluginController): EffectiveConfig {
 
 export function getEmbeddingModel(ctl: PluginController): string {
   return resolveEffectiveConfig(ctl).embeddingModel;
+}
+
+// The corpora auto-assigned by default when a chat has not set its own
+// assignedCorpora. A fresh read each call so the distiller's writes are seen
+// without a restart of the plugin.
+export function getDefaultCorpora(): string[] {
+  return loadSettings().defaultCorpora;
 }

@@ -1,0 +1,28 @@
+{
+  "name": "story-distiller",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Distill long stories (beyond the context window) into structured scene cards, character sheets and photographic/movie language, written into the portable knowledge-base corpus tree for RAG injection into prompt dev for MiniMax.",
+  "main": "dist/main.js",
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "start": "node dist/main.js",
+    "dryrun": "node dist/main.js --dry-run"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@lmstudio/sdk": "^1.5.0",
+    "mammoth": "^1.8.0",
+    "pdf-parse": "^1.1.1",
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.23.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.8",
+    "typescript": "^5.4.5"
+  }
+}
