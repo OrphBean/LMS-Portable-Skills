@@ -1,0 +1,129 @@
+{
+  "skill": "qwen38-skill-creator",
+  "purpose": "Evals for the meta-skill itself: does compiling a Qwen 3.8 27B runtime skill actually apply the 11-pass process, declare a reasoning mode, prime for the downstream targets (H3 / Klein / Krea 2), and instil the screenwriter's frame?",
+  "evals": [
+    {
+      "id": "create-from-verbose-doc",
+      "prompt": "Here is a 3000-word design document about writing short MiniMax H3 motion prompts from a user's action request. Compile it into a Qwen 3.8 skill named 'h3-short-motion-prompt'. The doc repeats background explanations, contains an 8-paragraph history of the tool, and lists 40 example prompts. The document never mentions reasoning modes or chat templates. The examples are written as abstract mood descriptions.",
+      "expected_behaviors": [
+        "Output is a skill directory with SKILL.md",
+        "A Reasoning mode section is declared near the top (instruct for simple motion synthesis)",
+        "The screenwriter's frame is operationalised: only what is in the frame, nouns and verbs, no abstract-mood prose",
+        "Cause-and-effect, motion continuity, and screen direction appear as stated rules",
+        "Background history, abstract-mood examples, and duplicates are removed",
+        "Final skill does not reproduce the source document's structure or prose wholesale"
+      ],
+      "success_criteria": [
+        "SKILL.md exists with frontmatter name matching directory",
+        "A Reasoning mode section exists and defaults to instruct or medium for H3",
+        "A stated rule requires concrete observable action rather than mood",
+        "A stated rule covers screen direction and cause-and-effect",
+        "No paragraph from the source history or its mood-prose examples appears verbatim"
+      ]
+    },
+    {
+      "id": "convert-frontier-skill",
+      "prompt": "Convert this existing Claude skill for 'narrative scene beats' into a Qwen 3.8 skill. The source is 400 lines, uses 'you are an expert', and describes beats in abstract emotional terms ('a beat of quiet tension'). The original model reasoned deeply by default and the skill relies on that implicit reasoning. Preserve the workflow's purpose.",
+      "expected_behaviors": [
+        "Workflow purpose is restated in the compiler's own words",
+        "A reasoning mode is declared instead of inheriting Qwen's xhigh default",
+        "Abstract emotional beats are re-grounded in observable physical action (screenwriter's frame)",
+        "Expert-framing and explanatory verbosity are removed",
+        "Constraints are promoted from examples into stated rules",
+        "Structure is reorganised, not paraphrased line-for-line"
+      ],
+      "success_criteria": [
+        "Runtime skill keeps the original beat-generation workflow purpose",
+        "Reasoning mode is declared and is not left to the xhigh default",
+        "At least one formerly abstract beat now has an observable-action rule",
+        "Body is shorter than the 400-line source",
+        "No 'you are an expert' framing remains"
+      ]
+    },
+    {
+      "id": "reasoning-mode-selection",
+      "prompt": "Create a Qwen skill that formats metadata into a fixed JSON report every hour. The runtime will call this skill 24 times a day. The author has not said anything about reasoning. Decide the reasoning mode and justify it.",
+      "expected_behaviors": [
+        "Reasoning mode defaults to instruct (enable_thinking: false or reasoning_effort low)",
+        "Compiler explicitly notes that leaving it at xhigh would waste minutes per run on a formatting task",
+        "preserve_thinking is addressed (disabled for the repeated single-shot task)",
+        "No numeric sampling parameters embedded in the skill body"
+      ],
+      "success_criteria": [
+        "SKILL.md declares Reasoning mode: instruct",
+        "The compiler's rationale names the overthinking trap explicitly",
+        "No sampling values appear in the skill body",
+        "Output is a self-contained skill directory"
+      ]
+    },
+    {
+      "id": "screenwriter-frame-discipline",
+      "prompt": "Compile a Krea 2 skill that turns a request like 'a nurse taking a break at dawn' into a believable-photography prompt of a real human subject. Emphasise photographic realism: anatomical plausibility, weight, natural micro-behaviour, explicit light, one clear action, positive-only imperfection cues.",
+      "expected_behaviors": [
+        "Reasoning mode: instruct",
+        "Real-human realism is operational: weight, posture, anatomy, micro-behaviour, imperfection cues (not AI gloss)",
+        "One dominant subject and one clear action; explicit light source",
+        "No abstract mood replacing observable detail; only what is in the frame",
+        "Positive-only realism cues; no negative-prompt block",
+        "Faithful expansion: no unsupported invention of new subjects or events"
+      ],
+      "success_criteria": [
+        "SKILL.md declares Reasoning mode: instruct",
+        "A stated rule grounds the human subject in anatomical plausibility, weight, or micro-behaviour",
+        "A stated rule requires an explicit light source or one clear action",
+        "No conventional negative-prompt block and no abstract-mood-only description in the output contract",
+        "Output is a self-contained skill directory"
+      ]
+    },
+    {
+      "id": "json-semantic-contract",
+      "prompt": "Compile a Qwen skill that outputs a JSON prompt object for an image model. No tools are involved. The runtime enforces the JSON schema via constrained decoding, so the skill must define field meanings, not syntax.",
+      "expected_behaviors": [
+        "Reasoning mode: instruct",
+        "Field-by-field semantic responsibilities are defined",
+        "No schema-syntax duplication beyond what semantics need",
+        "No runtime sampling/API parameters embedded in the skill",
+        "Example used only to resolve ambiguity, not as an imitable template"
+      ],
+      "success_criteria": [
+        "Every non-obvious field has a one-line semantic contract",
+        "The skill does not restate the JSON schema structure verbatim",
+        "No sampling values or provider config in the body",
+        "Strict decoding is acceptable in this no-tools case and not contradicted",
+        "Output is a self-contained skill directory"
+      ]
+    },
+    {
+      "id": "tool-call-vs-json-schema",
+      "prompt": "Compile a Qwen skill that calls two MCP tools (search and lookup) and returns the result as text. A naive design wraps the tool calls in a strict JSON Schema grammar. Compile it correctly for Qwen 3.8.",
+      "expected_behaviors": [
+        "Reasoning mode: instruct",
+        "Tools are declared in the initial system prompt (position zero) with parameters and expected <tool_call> XML",
+        "Strict JSON Schema decoding is explicitly forbidden at the sampling level for this skill",
+        "Fault-tolerant parsing and raw-XML sanitization are noted as runtime requirements",
+        "No mid-conversation system injection is relied on to update the tool schema"
+      ],
+      "success_criteria": [
+        "The compiled skill uses native <tool_call> XML, not JSON-schema tool output",
+        "A rule or runtime note forbids pairing this skill's tool calls with strict JSON decoding",
+        "The skill does not instruct the runtime to add a second system message mid-conversation",
+        "Output is a self-contained skill directory"
+      ]
+    },
+    {
+      "id": "revision-from-failed-execution",
+      "prompt": "A compiled Qwen skill failed: output JSON was schema-valid but the 'prompt' field contained the runtime API config. The skill had a clear prompt-field definition. The logs show the serving engine dropped the system message on this provider because a second system message was appended mid-conversation. Revise the skill.",
+      "expected_behaviors": [
+        "Failure is classified as runtime/chat-template issue, not skill-design failure",
+        "The skill is NOT rewritten for a stack-level cause",
+        "Compiler documents the classification and the runtime fix instead (consolidate into position-zero system prompt)",
+        "No gratuitous prompt changes"
+      ],
+      "success_criteria": [
+        "Failure class is identified as runtime/chat-template, not skill-design",
+        "Skill body is unchanged or only trivially touched",
+        "Runtime-config checklist is referenced for the user to verify"
+      ]
+    }
+  ]
+}

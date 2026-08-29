@@ -1,0 +1,8 @@
+dist
+node_modules
+.lmstudio/*
+!.lmstudio/entry.ts
+!.lmstudio/production.js
+*.bak-*
+*.lock
+*-lock.json

@@ -1,0 +1,11 @@
+# Normalize text files to LF in the repo. Checked-out platform endings
+# (CRLF on Windows) are handled automatically per working copy.
+* text=auto
+
+# Build/runtime artifacts that must never be line-normalized or diffed.
+*.exe binary
+*.dll binary
+*.pak binary
+*.bin binary
+*.onnx binary
+*.gguf binary

@@ -1,0 +1,39 @@
+# LM Studio binaries - recipient downloads these from LM Studio itself.
+# The portable launcher expects them at App\LM Studio\LM Studio.exe.
+/App/
+
+# --- Large / regenerable / machine-specific data under the portable Data tree.
+# Only the bespoke skills plugin is tracked; everything else is created or
+# downloaded per-machine and must not go into git.
+/Backups/
+/Data/cache-lm-studio/
+/Data/electron-profile/
+/Data/dot-lmstudio/backends/
+/Data/dot-lmstudio/extensions/backends/
+/Data/dot-lmstudio/extensions/vendor/
+/Data/dot-lmstudio/extensions/frameworks/
+/Data/dot-lmstudio/extensions/plugins/lmstudio/
+/Data/dot-lmstudio/hub/
+/Data/dot-lmstudio/models/
+/Data/dot-lmstudio/conversations/
+/Data/dot-lmstudio/server-logs/
+/Data/dot-lmstudio/credentials/
+/Data/dot-lmstudio/.internal/
+/Data/dot-lmstudio/plugin-data/
+/Data/dot-lmstudio/mcp.json
+/Data/dot-lmstudio/settings.json
+/Data/dot-lmstudio/skills/
+
+# --- dependency / lock files (plugin reinstalls its own deps on setup) ---
+node_modules/
+*.lock
+*-lock.json
+
+# --- local backups / scratch ---
+*.bak-*
+*.tmp
+*.swp
+
+# --- OS noise ---
+Thumbs.db
+desktop.ini
