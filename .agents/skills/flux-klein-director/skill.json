@@ -1,0 +1,13 @@
+{
+  "name": "flux-klein-director",
+  "description": "Route a FLUX.2 [klein] image-prompt request to exactly one modality skill (text-to-image, single-reference edit, or multi-reference) and emit the final prompt. Use when asked to construct a prompt for FLUX.2 Klein image generation or editing. Do NOT use for API integration, generation execution, sampler settings, seed control, or non-FLUX models.",
+  "tags": [
+    "flux",
+    "klein",
+    "router",
+    "image",
+    "prompt",
+    "minimax",
+    "director"
+  ]
+}

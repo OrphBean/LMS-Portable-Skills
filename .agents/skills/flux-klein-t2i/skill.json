@@ -1,0 +1,12 @@
+{
+  "name": "flux-klein-t2i",
+  "description": "Build a FLUX.2 [klein] text-to-image prompt from a textual request. Use when no supplied image is modified or semantically combined with the output. Do NOT use for single-reference editing (flux-klein-edit) or multi-reference composition (flux-klein-multiref).",
+  "tags": [
+    "flux",
+    "klein",
+    "image",
+    "text-to-image",
+    "prompt",
+    "t2i"
+  ]
+}

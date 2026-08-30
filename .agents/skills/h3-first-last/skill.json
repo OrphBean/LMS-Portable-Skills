@@ -1,0 +1,14 @@
+{
+  "name": "h3-first-last",
+  "description": "Build a MiniMax H3 first-frame + last-frame (FL2VA) prompt that transitions between a required opening image and a required final image. Use when two images define the required beginning and ending states. Do NOT use for a single opening frame (h3-i2v), a single final frame (h3-last-frame), or guidance-only references (h3-reference).",
+  "tags": [
+    "h3",
+    "first-last",
+    "first-frame",
+    "last-frame",
+    "transition",
+    "minimax",
+    "video",
+    "prompt"
+  ]
+}

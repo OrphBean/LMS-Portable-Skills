@@ -1,0 +1,11 @@
+{
+  "name": "qwen38-chat-compaction",
+  "description": "Compress a Qwen 3.8 27B prompt-generation chat into a compact plain-text continuation document for a fresh chat window, preserving reference-image descriptions, core actions and requests, established decisions, and cinematic conventions. Use when a long H3 / FLUX Klein / Krea 2 prompt-generation session must continue in a new window, or before context limits force a restart. Do NOT use for summarizing documents or unrelated conversations, for one-shot summaries that will not be continued, or whe",
+  "tags": [
+    "qwen38",
+    "compaction",
+    "context",
+    "continuation",
+    "prompt-generation"
+  ]
+}

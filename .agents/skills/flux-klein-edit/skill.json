@@ -1,0 +1,12 @@
+{
+  "name": "flux-klein-edit",
+  "description": "Build a FLUX.2 [klein] single-reference edit prompt. Use when exactly one source image is passed to Klein and the user wants to change, replace, add, remove, restyle, relight, or modify that source. Do NOT use for text-to-image (flux-klein-t2i) or two-or-more-reference composition (flux-klein-multiref).",
+  "tags": [
+    "flux",
+    "klein",
+    "image",
+    "edit",
+    "single-reference",
+    "prompt"
+  ]
+}

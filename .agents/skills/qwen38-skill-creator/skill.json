@@ -1,0 +1,11 @@
+{
+  "name": "qwen38-skill-creator",
+  "description": "Compile rich source knowledge into a compact Qwen 3.8 27B runtime skill. Use when creating a new Qwen skill, converting a skill written for OpenAI/DeepSeek/Claude/Gemma into a Qwen 3.8 skill, or revising an existing Qwen skill after failed executions. Do NOT use for general Qwen prompting guides, one-shot prompts with no skill deliverable, or skills targeting a runtime other than Qwen 3.8 27B.",
+  "tags": [
+    "qwen38",
+    "skill",
+    "compiler",
+    "compile",
+    "skill-creator"
+  ]
+}

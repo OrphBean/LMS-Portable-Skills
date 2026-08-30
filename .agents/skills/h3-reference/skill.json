@@ -1,0 +1,15 @@
+{
+  "name": "h3-reference",
+  "description": "Rewrite a request plus one or more reference assets into MiniMax H3 full-reference (Ref2VA) format with reference labels, retention analysis, and a detailed description. Use when supplied assets provide guidance (identity, appearance, composition, camera, motion, trajectory, performance, style, temporal structure, storyboard planning, audio) without serving as literal boundary frames. Do NOT use when an image is only the opening frame (h3-i2v), an endpoint pair (h3-first-last), or the final fram",
+  "tags": [
+    "h3",
+    "reference",
+    "ref2va",
+    "identity",
+    "appearance",
+    "consistency",
+    "minimax",
+    "video",
+    "prompt"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "h3-t2v",
+  "description": "Build a MiniMax H3 text-to-video (T2VA) prompt from a textual creative request. Use when no supplied image acts as a required first or final frame. Do NOT use when an image must be the literal opening frame (h3-i2v), an endpoint pair (h3-first-last), the final frame (h3-last-frame), or a full-reference rewrite (h3-reference).",
+  "tags": [
+    "h3",
+    "t2v",
+    "text-to-video",
+    "prompt",
+    "minimax",
+    "video",
+    "timeline",
+    "audiovisual"
+  ]
+}

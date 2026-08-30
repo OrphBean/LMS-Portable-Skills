@@ -1,0 +1,17 @@
+{
+  "name": "genre-vampire-erotic-gothic",
+  "description": "Use when recreating late-1960s/1970s erotic vampire cinema: photochemical 35mm, glamour-grade dark gothic, theatrical chiaroscuro. Pick exactly one style family (Hammer technicolor, Karnstein erotic, Rollin surrealist, Franco zoom, Art-deco, Iberian rural, giallo, grindhouse, psychedelic occult). Do NOT use for modern dark-fantasy spectacle, VHS home video (genre-vhs-domestic), or contemporary horror; those read as wrong.",
+  "tags": [
+    "format:35mm",
+    "period:1970s",
+    "color:saturated",
+    "camera:zoom",
+    "camera:dolly",
+    "camera:low-angle",
+    "lighting:chiaroscuro",
+    "mood:erotic",
+    "mood:melancholy",
+    "mood:gothic",
+    "grade:photochemical"
+  ]
+}

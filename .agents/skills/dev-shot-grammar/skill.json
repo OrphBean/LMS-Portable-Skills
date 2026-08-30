@@ -1,0 +1,17 @@
+{
+  "name": "dev-shot-grammar",
+  "description": "Cinematic shot-decision grammar for building a shot list: shot size, camera angle, camera height, movement, composition, continuity/cutting and transitions, each mapped to its narrative job. Use when choosing how to frame each beat or when checking continuity across a sequence. Do NOT use for staging the environment or lighting (dev-mise-en-scene), for producing an H3 prompt, or for a single static description you already have.",
+  "tags": [
+    "shot-grammar",
+    "shot-size",
+    "camera-angle",
+    "camera-movement",
+    "composition",
+    "continuity",
+    "cutting",
+    "180-rule",
+    "transitions",
+    "eye-level",
+    "rule-of-thirds"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "dev-director",
+  "description": "Develop a raw video idea into a cinematic concept and shot list. Use when the user has a theme or rough idea but no finished prompt, and wants characters, environment, interactions, sequence and style defined before prompting. Runs a short interactive Q&A, then routes to dev-shot-grammar / dev-mise-en-scene / dev-shot-plan. Do NOT use when a fully-formed prompt is already given (h3-director), or for loading a genre (genre-orchestrator).",
+  "tags": [
+    "development",
+    "director",
+    "concept",
+    "pre-prompt",
+    "shots",
+    "coverage",
+    "cinematic",
+    "characters",
+    "environment",
+    "sequence",
+    "storyboard"
+  ]
+}

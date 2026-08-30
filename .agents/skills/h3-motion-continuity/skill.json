@@ -1,0 +1,14 @@
+{
+  "name": "h3-motion-continuity",
+  "description": "Physically grounded motion and continuity methodology for H3 video prompts. Use when writing H3 prompts where body mechanics, causal action chains, weight transfer, locomotion, spatial continuity, or match-on-action across cuts matter. Governs how to describe subject motion, physical interaction, world-state persistence, and camera trajectory. Do NOT use for camera-style/look references (use h3-style-*), or for narrative, genre, or dialogue decisions.",
+  "tags": [
+    "h3",
+    "motion",
+    "continuity",
+    "physics",
+    "causality",
+    "body-mechanics",
+    "camera",
+    "overlay"
+  ]
+}

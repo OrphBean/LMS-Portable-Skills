@@ -1,0 +1,13 @@
+{
+  "name": "h3-last-frame",
+  "description": "Build a MiniMax H3 final-frame-conditioned (L2VA) prompt that converges onto a supplied final image. Use when a supplied image defines the required ending visual state. Do NOT use when the image is the opening frame (h3-i2v), an endpoint pair (h3-first-last), or guidance-only (h3-reference).",
+  "tags": [
+    "h3",
+    "last-frame",
+    "final-frame",
+    "converge",
+    "minimax",
+    "video",
+    "prompt"
+  ]
+}

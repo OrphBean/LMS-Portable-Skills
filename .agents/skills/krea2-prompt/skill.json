@@ -1,0 +1,11 @@
+{
+  "name": "krea2-prompt",
+  "description": "Compile a user's idea, brief, or reference images into one high-quality positive prompt for Krea 2 image generation. Use when asked to create, expand, or refine an image prompt for Krea 2 / K2. Do NOT use for Krea API/MCP calls, generation jobs, model selection, LoRA training, moodboard browsing, or ComfyUI control.",
+  "tags": [
+    "krea2",
+    "image",
+    "prompt",
+    "synthesis",
+    "social"
+  ]
+}

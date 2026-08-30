@@ -1,0 +1,13 @@
+{
+  "name": "h3-i2v",
+  "description": "Build a MiniMax H3 image-to-video (I2VA) prompt where the supplied image is the literal opening frame. Use when a supplied image is the authoritative starting visual state of the video. Do NOT use when the image defines only the ending (h3-last-frame), both endpoints (h3-first-last), or is guidance-only (h3-reference).",
+  "tags": [
+    "h3",
+    "i2v",
+    "image-to-video",
+    "prompt",
+    "minimax",
+    "opening-frame",
+    "video"
+  ]
+}

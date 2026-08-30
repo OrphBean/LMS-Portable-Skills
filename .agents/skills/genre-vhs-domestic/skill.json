@@ -1,0 +1,17 @@
+{
+  "name": "genre-vhs-domestic",
+  "description": "Use when recreating a 1990s consumer VHS home-video look: family camcorder footage, 4:3 interlaced analog video, consumer autoexposure and autofocus, in-camera hard cuts, built-in microphone, warm tungsten household light. Do NOT use for MiniDV (genre-minidv-camcorder), 35mm film, cinematic documentary handheld, or stylised 'destroyed VHS'; those read as wrong.",
+  "tags": [
+    "format:vhs",
+    "format:4-3",
+    "period:1990s",
+    "camera:handheld",
+    "camera:zoom",
+    "color:chroma-bleed",
+    "color:warm-tungsten",
+    "motion:interlaced",
+    "audio:built-in-mic",
+    "edit:in-camera",
+    "mood:domestic"
+  ]
+}

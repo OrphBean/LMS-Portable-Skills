@@ -1,0 +1,19 @@
+{
+  "name": "dev-mise-en-scene",
+  "description": "Design the four mise-en-scene control areas for a scene: setting and props, costume and makeup, lighting, and staging/performance. Use when turning an environment and characters into a concrete visual and performance design before prompting. Do NOT use for shot framing/camera (dev-shot-grammar), genre style (genre-orchestrator), or producing an H3 prompt.",
+  "tags": [
+    "mise-en-scene",
+    "production-design",
+    "setting",
+    "props",
+    "costume",
+    "makeup",
+    "lighting",
+    "three-point",
+    "high-key",
+    "low-key",
+    "staging",
+    "performance",
+    "color"
+  ]
+}

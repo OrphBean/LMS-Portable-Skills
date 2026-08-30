@@ -1,0 +1,15 @@
+{
+  "name": "genre-orchestrator",
+  "description": "Load and fold a requested genre/style into an active H3 (or image) prompt. Use when a request names or clearly signals a style/genre and it must be woven into the prompt fields. Loads exactly the matching genre-* skill, picks one dominant family (plus at most one secondary), and splices its Style reference block into the prompt. Do NOT use for translating a genre doc into a genre skill (genre-compiler) or for writing the pre-prompt shot plan (dev-director).",
+  "tags": [
+    "genre",
+    "style",
+    "routing",
+    "splice",
+    "h3",
+    "prompt",
+    "mood",
+    "aesthetic",
+    "look"
+  ]
+}

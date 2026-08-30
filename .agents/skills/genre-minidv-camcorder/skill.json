@@ -1,0 +1,16 @@
+{
+  "name": "genre-minidv-camcorder",
+  "description": "Use when rendering early-2000s consumer MiniDV camcorder footage: small-sensor digital video, body-driven handheld motion with inertia, imperfect reactive framing, occasional optical rocker zoom, built-in mic. Do NOT use for VHS home video (genre-vhs-domestic), 35mm film, gimbal-smooth or tripod-stable camera, drone shots, or mechanical/perfect tracking; those read as wrong.",
+  "tags": [
+    "format:minidv",
+    "format:digital-video",
+    "period:early-2000s",
+    "camera:handheld",
+    "camera:zoom",
+    "motion:inertia",
+    "color:washed",
+    "audio:built-in-mic",
+    "mood:found-footage",
+    "mood:home-movie"
+  ]
+}

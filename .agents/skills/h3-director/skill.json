@@ -1,0 +1,19 @@
+{
+  "name": "h3-director",
+  "description": "Route a MiniMax H3 video-prompt request to exactly one modality skill and produce the final plain-text prompt. Use when asked to create a prompt for MiniMax H3 video generation. Do NOT use for actual generation or API calls, for non-H3 video tools, or for editing prompts outside a generation request.",
+  "tags": [
+    "h3",
+    "director",
+    "router",
+    "modality",
+    "minimax",
+    "video",
+    "prompt",
+    "genre",
+    "duration",
+    "aspect-ratio",
+    "t2v",
+    "i2v",
+    "reference"
+  ]
+}

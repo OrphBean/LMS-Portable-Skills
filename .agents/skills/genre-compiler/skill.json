@@ -1,0 +1,14 @@
+{
+  "name": "genre-compiler",
+  "description": "Compile a verbose genre/style document into a conforming LM-native genre skill (skill.json + SKILL.md + references source). Use when adding a new genre, converting a style reference doc into a routable genre, or refactoring an existing genre skill. Do NOT use for writing the pre-prompt shot plan (dev-director), for building H3 prompt syntax, or for editing a genre skill by hand.",
+  "tags": [
+    "genre",
+    "compiler",
+    "extraction",
+    "schema",
+    "style",
+    "converter",
+    "skill-builder",
+    "routing"
+  ]
+}

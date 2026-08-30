@@ -1,0 +1,17 @@
+{
+  "name": "dev-shot-plan",
+  "description": "Assemble a developed concept into a full shot-by-shot coverage plan: characters, environment, interactions, style and sequence, each shot's frame/move/composition/staging/lighting/audio and continuity. Use as the final pre-prompt output, to be handed to h3-director. Do NOT use to write the H3 prompt itself (h3-director/modality), to choose genre (genre-orchestrator), or for one-off single descriptions you already have.",
+  "tags": [
+    "shot-plan",
+    "coverage",
+    "shot-list",
+    "storyboard",
+    "sequence",
+    "continuity",
+    "screenwriter",
+    "pre-prompt",
+    "characters",
+    "environment",
+    "interactions"
+  ]
+}

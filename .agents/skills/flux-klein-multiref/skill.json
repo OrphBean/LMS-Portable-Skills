@@ -1,0 +1,12 @@
+{
+  "name": "flux-klein-multiref",
+  "description": "Build a FLUX.2 [klein] multi-reference prompt that combines or selectively transfers information from two to four reference images. Use when two or more images are passed to Klein and each contributes distinct attributes. Do NOT use for a single edit source (flux-klein-edit) or pure text-to-image (flux-klein-t2i).",
+  "tags": [
+    "flux",
+    "klein",
+    "image",
+    "multi-reference",
+    "prompt",
+    "composition"
+  ]
+}
