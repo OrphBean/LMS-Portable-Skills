@@ -1,0 +1,157 @@
+{
+  "breakdownTitle": "The Paris Letter — reference-image scene breakdown",
+  "chosenModel": "qwen-<image-capable id>",
+  "styleGuide": {
+    "look": "1962 Paris noir, soft grain, practical-lit interiors, desaturated teal-shadow palette",
+    "palette": ["burnt umber smoke", "candle-teal", "faded sepia documents", "oxblood leather"],
+    "lighting": "single practical tungsten per room; cool streetlight spill through curtains for night",
+    "texture": "worn velvet, crinkled on-ionskin paper, tarnished brass",
+    "artDirection": "late-50s French apartment, art-school clutter, real period objects only",
+    "aspectRatio": "16:9"
+  },
+  "scenes": [
+    {
+      "sceneId": "01",
+      "slugline": "INT. CAT GRAVEYARD APARTMENT - NIGHT",
+      "description": "Nora finds the letter in her dead mother's desk; the locket is passed to her.",
+      "envReqs": {
+        "locationName": "Nora's mother's parlour, Rue de Seine, 1962",
+        "era": "1959-1962 Paris",
+        "timeOfDay": "night",
+        "weather": "drizzle against the window",
+        "architecture": "Georgian walk-up, tall casement windows, marble fireplace",
+        "atmosphere": "mothball and beeswax, held breath, the room at half-mast",
+        "lightingLook": "one desk lamp + a streetlamp slitting through the rain-blurred window",
+        "palette": ["ochre lamplight", "ink-blue shadows"],
+        "setDressing": ["oak roll-top desk", "brass letter opener", "faded red felt blotter", "family photographs in silver frames"],
+        "establishingRefs": ["parlour-establishing-wide", "parlour-desk-angle"]
+      },
+      "characterReqs": [
+        {
+          "characterId": "nora",
+          "name": "Nora",
+          "roleInScene": "protagonist, inherits the letter",
+          "identity": "31, fine-boned, dark oiled hair in a low chignon, long dry fingers",
+          "wardrobe": "heather-grey wool suit, cream silk blouse, mother's cameo at the throat",
+          "wardrobeVariantId": "nora-costume-1",
+          "makeupHair": "no makeup, pale, mascara-free; hair severe and pinned",
+          "distinctiveMarks": ["small crescent scar on her right cheekbone"],
+          "bodyLanguage": "hesitant, flinch on contact, still shoulders",
+          "faceRefId": "nora-face-front"
+        }
+      ],
+      "propReqs": [
+        {
+          "propId": "locket",
+          "name": "oxidised brass locket on a split chain",
+          "type": "hero",
+          "usage": "opens to reveal a clipped photo and a single blonde hair",
+          "continuity": "hairline crack in the lid enamel present from scene 1",
+          "refId": "locket-brass"
+        }
+      ],
+      "closeUps": [
+        {
+          "insertId": "locket-ecus",
+          "subject": "engraved 'C' on the locket lid, the hairline crack crossing the C",
+          "why": "the identification must hold in every later reveal",
+          "framing": "macro",
+          "refId": "locket-brass-macro"
+        }
+      ]
+    },
+    {
+      "sceneId": "04",
+      "slugline": "EXT. WATERSIDE BOOKSTALL - DAY",
+      "description": "Nora asks the bookseller about the letter; he avoids her eyes.",
+      "envReqs": {
+        "locationName": "Riverside bouquiniste stalls",
+        "era": "1962 Paris",
+        "timeOfDay": "late afternoon",
+        "weather": "hard autumn sun",
+        "architecture": "green-wood bookstalls on the quay wall, Haussmann arcades behind",
+        "atmosphere": "dry, busy, staged indifference",
+        "lightingLook": "long raking sun on green wood and grey stone",
+        "palette": ["pistachio green", "grey granite", "pale gold"],
+        "setDressing": ["crates of yellowed paperbacks", "brass scales", "a crumpled tarpaulin"],
+        "establishingRefs": ["quay-stalls-wide"]
+      },
+      "characterReqs": [
+        {
+          "characterId": "nora",
+          "name": "Nora",
+          "roleInScene": "seeks the truth",
+          "identity": "31, fine-boned, dark low chignon, crescent scar right cheekbone",
+          "wardrobe": "heather-grey wool suit, black half-gloves, the cameo replaced by the locket",
+          "wardrobeVariantId": "nora-costume-1 (now wears locket instead of cameo)",
+          "makeupHair": "as before, windblown",
+          "distinctiveMarks": ["crescent scar right cheekbone"],
+          "bodyLanguage": "leans in, chin up, defiant",
+          "faceRefId": "nora-face-front"
+        }
+      ],
+      "propReqs": [
+        {
+          "propId": "locket",
+          "name": "oxidised brass locket on split chain",
+          "type": "hand",
+          "usage": "she fingers it while questioning him",
+          "continuity": "same crack; chain now reads over the wool lapel",
+          "refId": "locket-brass"
+        }
+      ],
+      "closeUps": []
+    }
+  ],
+  "refIds": ["parlour-establishing-wide", "parlour-desk-angle", "quay-stalls-wide", "nora-face-front", "locket-brass", "locket-brass-macro"],
+  "referenceImageManifest": [
+    {
+      "refId": "nora-face-front",
+      "category": "character",
+      "subject": "Nora - face & identity",
+      "subjectSummary": "31, fine-boned, dark oiled hair in a low chignon, long dry fingers, small crescent scar on the right cheekbone",
+      "framing": "face 3/4",
+      "view": "front + 3/4",
+      "consistencyDescriptor": "Nora: 31, fine-boned face, long dry fingers, dark oiled hair in a low severe chignon, no makeup, pale, small crescent scar on the right cheekbone. Wear a heather-grey wool suit over a cream silk blouse.",
+      "variants": ["nora-costume-1", "nora-costume-2 (locket replaces cameo)"],
+      "usedInScenes": ["01", "04", "07"],
+      "priority": "P0"
+    },
+    {
+      "refId": "parlour-establishing-wide",
+      "category": "env",
+      "subject": "Nora's mother's parlour - wide establishing",
+      "subjectSummary": "Georgian walk-up on Rue de Seine; oak roll-top desk, marble fireplace, tall casement windows",
+      "framing": "wide establishing",
+      "view": "front",
+      "consistencyDescriptor": "1962 Paris apartment parlour: Georgian walk-up, oak roll-top desk with brass letter opener and faded red felt blotter, marble fireplace, tall casement windows, silver-framed family photographs; night, ochre lamplight and ink-blue shadows, drizzle at the glass.",
+      "variants": [],
+      "usedInScenes": ["01"],
+      "priority": "P1"
+    },
+    {
+      "refId": "locket-brass",
+      "category": "prop",
+      "subject": "oxidised brass locket on split chain",
+      "subjectSummary": "oxidised brass locket, hairline crack in the lid enamel, split chain",
+      "framing": "bust height, on the chest",
+      "view": "front",
+      "consistencyDescriptor": "oxidised brass oval locket on a split chain; a hairline crack crosses an engraved 'C' on the lid; opens to a clipped photo and a single blonde hair.",
+      "variants": [],
+      "usedInScenes": ["01", "04", "07"],
+      "priority": "P0"
+    },
+    {
+      "refId": "locket-brass-macro",
+      "category": "insert",
+      "subject": "engraved 'C' + hairline crack - macro",
+      "subjectSummary": "macro of the lid: the engraved C and the crack through it",
+      "framing": "macro",
+      "view": "top-down",
+      "consistencyDescriptor": "Macro of an oxidised brass locket lid: engraved capital 'C' with a hairline crack running from the hinge through the lower serif. Warm desk-lamp side-light, brassy metallic read.",
+      "variants": [],
+      "usedInScenes": ["01", "07"],
+      "priority": "P0"
+    }
+  ]
+}

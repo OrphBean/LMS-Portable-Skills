@@ -35,6 +35,12 @@ node_modules/
 *.lock
 *-lock.json
 
+# --- local-only (never upload) ---
+# Mirror-management skill is personal to this machine/install and stays local.
+/.agents/skills/lmstudio-mirror/
+# LM Studio CLI binary downloaded by the app; large and version-specific.
+/Data/dot-lmstudio/bin/
+
 # --- local backups / scratch ---
 *.bak-*
 *.tmp

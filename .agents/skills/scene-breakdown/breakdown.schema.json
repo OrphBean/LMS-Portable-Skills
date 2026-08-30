@@ -1,0 +1,134 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://lmstudio-mirror/skills/scene-breakdown/breakdown.schema.json",
+  "title": "SceneBreakdown",
+  "description": "Production-style scene breakdown for reference-image generation. Per-scene env/character/prop/close-up requirements plus a de-duplicated global reference-image manifest.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["breakdownTitle", "chosenModel", "scenes", "referenceImageManifest"],
+  "properties": {
+    "breakdownTitle": { "type": "string", "minLength": 1 },
+    "chosenModel": { "type": "string", "minLength": 1 },
+    "styleGuide": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "look": { "type": "string" },
+        "palette": { "type": "array", "items": { "type": "string" } },
+        "lighting": { "type": "string" },
+        "texture": { "type": "string" },
+        "artDirection": { "type": "string" },
+        "aspectRatio": { "type": "string" }
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/Scene" }
+    },
+    "refIds": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Stable subject ids reused across scenes."
+    },
+    "referenceImageManifest": {
+      "$ref": "#/definitions/Manifest"
+    }
+  },
+  "definitions": {
+    "Scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sceneId", "slugline", "description", "envReqs", "characterReqs", "propReqs", "closeUps"],
+      "properties": {
+        "sceneId": { "type": "string", "minLength": 1 },
+        "slugline": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "envReqs": { "$ref": "#/definitions/EnvReqs" },
+        "characterReqs": { "type": "array", "items": { "$ref": "#/definitions/CharacterReqs" } },
+        "propReqs": { "type": "array", "items": { "$ref": "#/definitions/PropReqs" } },
+        "closeUps": { "type": "array", "items": { "$ref": "#/definitions/CloseUp" } }
+      }
+    },
+    "EnvReqs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["locationName", "timeOfDay"],
+      "properties": {
+        "locationName": { "type": "string", "minLength": 1 },
+        "era": { "type": "string" },
+        "timeOfDay": { "type": "string", "minLength": 1 },
+        "weather": { "type": "string" },
+        "architecture": { "type": "string" },
+        "atmosphere": { "type": "string" },
+        "lightingLook": { "type": "string" },
+        "palette": { "type": "array", "items": { "type": "string" } },
+        "setDressing": { "type": "array", "items": { "type": "string" } },
+        "establishingRefs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "CharacterReqs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["characterId", "name", "identity", "wardrobe"],
+      "properties": {
+        "characterId": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "roleInScene": { "type": "string" },
+        "identity": { "type": "string", "minLength": 1 },
+        "wardrobe": { "type": "string", "minLength": 1 },
+        "wardrobeVariantId": { "type": "string" },
+        "makeupHair": { "type": "string" },
+        "distinctiveMarks": { "type": "array", "items": { "type": "string" } },
+        "bodyLanguage": { "type": "string" },
+        "faceRefId": { "type": "string" }
+      }
+    },
+    "PropReqs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["propId", "name", "type", "usage"],
+      "properties": {
+        "propId": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "type": { "type": "string", "enum": ["hero", "hand", "set"] },
+        "usage": { "type": "string", "minLength": 1 },
+        "continuity": { "type": "string" },
+        "refId": { "type": "string" }
+      }
+    },
+    "CloseUp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["insertId", "subject", "why", "framing", "refId"],
+      "properties": {
+        "insertId": { "type": "string", "minLength": 1 },
+        "subject": { "type": "string", "minLength": 1 },
+        "why": { "type": "string" },
+        "framing": { "type": "string", "enum": ["macro", "insert", "extreme close-up"] },
+        "refId": { "type": "string", "minLength": 1 }
+      }
+    },
+    "Manifest": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["refId", "category", "subject", "subjectSummary", "framing", "view", "consistencyDescriptor", "usedInScenes", "priority"],
+        "properties": {
+          "refId": { "type": "string", "minLength": 1 },
+          "category": { "type": "string", "enum": ["character", "env", "prop", "insert"] },
+          "subject": { "type": "string", "minLength": 1 },
+          "subjectSummary": { "type": "string" },
+          "framing": { "type": "string", "minLength": 1 },
+          "view": { "type": "string", "minLength": 1 },
+          "consistencyDescriptor": { "type": "string", "minLength": 1 },
+          "variants": { "type": "array", "items": { "type": "string" } },
+          "usedInScenes": { "type": "array", "items": { "type": "string" } },
+          "priority": { "type": "string", "enum": ["P0", "P1", "P2"] }
+        }
+      }
+    }
+  }
+}
