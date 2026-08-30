@@ -22,6 +22,7 @@ plumbing and the custom skills.
 | Shared helpers | `Portable.psm1` | yes |
 | Bespoke skills | `.agents\skills\` | yes |
 | Skills plugin (Claude-style `/skill-name` activation) | `Data\dot-lmstudio\...\khtsly\skills\` | yes |
+| Knowledge-base / RAG plugin (folder-based corpora) | `Data\dot-lmstudio\...\khtsly\knowledge-base\` | yes |
 
 ---
 
@@ -133,12 +134,49 @@ runs (`.lmstudio\production.js`) before restarting LM Studio. See `AGENTS.md` §
 
 ---
 
+## Knowledge base (RAG) plugin
+
+The same install also carries a **persistent, folder-based RAG plugin**
+(`khtsly/knowledge-base`). Keep reference documents (film styles, prompt examples,
+genre notes, …) in corpora and have them injected into prompts automatically.
+
+### Add a corpus (no editing/rebuilding needed)
+
+1. Drop files into `Data\dot-lmstudio\knowledge-base\<corpus>\` — one subfolder
+   per corpus (`.md`, `.txt`, `.csv`, source files, …). Optionally add a
+   `_corpus.md` at the corpus root whose first paragraph is its description.
+2. In a chat, open the plugin config and set **Assigned Corpora** to the corpus
+   folder name(s), leaving **Auto-Retrieve** on. The plugin embeds the query and
+   injects matching chunks from those corpora into each prompt — no tool call.
+3. After adding/changing files, run the `reindex_kb` tool (or restart the
+   conversation); the index refreshes on first search when stale.
+
+### Tools
+
+`list_kb_corpora`, `list_kb_documents`, `search_kb`, `read_kb_document`,
+`add_kb_document`, `reindex_kb`.
+
+### Data & freshness
+
+- Corpora root: `Data\dot-lmstudio\knowledge-base\` **is user data — never
+  delete it.** The vector index at
+  `plugin-data\lms-knowledge-base\index.json` is **derived**; rebuild it via
+  `reindex_kb` or delete it to force a full re-index.
+- Indexing uses LM Studio's own embedding model
+  (`nomic-ai/nomic-embed-text-v1.5-GGUF` by default), which must be
+  loadable in LM Studio.
+- Rebuild the KB plugin bundle from `src\` exactly like the skills plugin (see
+  `AGENTS.md` §18), then restart LM Studio.
+
+---
+
 ## Important
 
 - Persistent data lives in `Data\` — **never delete `.lmstudio`**, and do not treat
   any `cache` folder as throwaway. Preservation beats cleanup.
-- Large models, conversations, credentials, caches, vendor plugins, and the app
-  binaries are **kept out of git**. Only the portable config, launcher, and the
-  bespoke skills/plugin are tracked.
+- Large models, conversations, credentials, caches, vendor plugins, the app
+  binaries, and the knowledge-base corpora/index are **kept out of git**. Only the
+  portable config, launcher, both bespoke plugins, and the `\.agents\skills` are
+  tracked.
 - If you move the whole folder, re-run `Install-Portable.ps1` so the junction
   targets and the skills configuration follow the new path.
